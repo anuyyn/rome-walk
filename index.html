@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>로마 도보 6일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#F2F0F3; --surface:#FFFFFF; --surface2:#E9E5EC; --sunken:#DFDAE3;
+  --ink:#1F1A23; --ink2:#4A4252; --muted:#6C6373; --line:#DCD6E0;
+  --accent:#8C2F3D;
+  --shadow:0 1px 2px rgba(31,26,35,.06), 0 8px 24px rgba(31,26,35,.08);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#141017; --surface:#1D1822; --surface2:#272130; --sunken:#100D14;
+    --ink:#EFEAF2; --ink2:#C9C0D2; --muted:#9C92A8; --line:#342D3E;
+    --accent:#E2687B;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#141017; --surface:#1D1822; --surface2:#272130; --sunken:#100D14;
+  --ink:#EFEAF2; --ink2:#C9C0D2; --muted:#9C92A8; --line:#342D3E;
+  --accent:#E2687B;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:400 14px/1.6 "IBM Plex Sans KR", system-ui, -apple-system, "Malgun Gothic", sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+[hidden]{display:none !important}
+button{font:inherit; color:inherit}
+
+.app{display:flex; flex-direction:column; height:100%}
+
+.bar{
+  flex:0 0 auto; background:var(--surface); border-bottom:1px solid var(--line);
+  padding:10px 16px; padding-top:calc(10px + env(safe-area-inset-top,0px));
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px;
+}
+.brand{display:flex; align-items:baseline; gap:10px; min-width:0}
+.brand h1{
+  margin:0; font:700 19px/1.2 "Gowun Batang", serif;
+  letter-spacing:-.01em; white-space:nowrap;
+}
+.brand .base{
+  font-size:11.5px; color:var(--muted); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.brand .base b{color:var(--ink2); font-weight:500}
+
+.days{display:flex; gap:6px; flex-wrap:wrap; margin-left:auto}
+.daytab{
+  --c:var(--accent);
+  display:flex; align-items:center; gap:7px; cursor:pointer;
+  background:transparent; border:1px solid var(--line); border-radius:999px;
+  padding:5px 12px 5px 9px; line-height:1; transition:background .14s, border-color .14s;
+}
+.daytab:hover{background:var(--surface2)}
+.daytab .dot{width:9px; height:9px; border-radius:50%; background:var(--c); flex:0 0 auto}
+.daytab .d{font-size:12.5px; font-weight:500; font-variant-numeric:tabular-nums}
+.daytab .w{font-size:11px; color:var(--muted)}
+.daytab[aria-pressed="true"]{background:var(--c); border-color:var(--c); color:#fff}
+.daytab[aria-pressed="true"] .w{color:rgba(255,255,255,.75)}
+.daytab[aria-pressed="true"] .dot{background:#fff}
+.daytab:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+.grid{flex:1 1 auto; display:grid; grid-template-columns:372px 1fr; min-height:0}
+
+.panel{
+  border-right:1px solid var(--line); background:var(--surface);
+  overflow-y:auto; overscroll-behavior:contain; padding:0 0 28px;
+}
+.dayhead{padding:18px 20px 14px; border-bottom:1px solid var(--line)}
+.eyebrow{
+  font:500 10.5px/1 "Cinzel", serif; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--c, var(--accent)); display:flex; align-items:center; gap:8px; margin-bottom:9px;
+}
+.eyebrow::after{content:""; flex:1; height:1px; background:var(--line)}
+.dayhead h2{margin:0 0 4px; font:700 21px/1.32 "Gowun Batang", serif; text-wrap:balance}
+.dayhead .sub{margin:0; font-size:12.5px; color:var(--muted)}
+
+.stats{display:flex; border-bottom:1px solid var(--line)}
+.stat{flex:1; padding:11px 20px; border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat .k{font-size:10.5px; color:var(--muted); letter-spacing:.04em}
+.stat .v{font:500 16px/1.3 "IBM Plex Sans KR", sans-serif; font-variant-numeric:tabular-nums}
+.stat .v small{font-size:11px; color:var(--muted); font-weight:400}
+
+.notes{padding:13px 20px; display:flex; flex-direction:column; gap:7px; border-bottom:1px solid var(--line)}
+.note{display:flex; gap:8px; font-size:12px; color:var(--ink2); line-height:1.55}
+.note::before{content:"–"; color:var(--muted); flex:0 0 auto}
+
+.stops{list-style:none; margin:0; padding:10px 0 0}
+.stop{position:relative; display:flex; gap:12px; padding:0 20px}
+.rail{position:relative; flex:0 0 26px; display:flex; justify-content:center}
+.rail::before{content:""; position:absolute; top:0; bottom:0; width:2px; background:var(--line)}
+.stop:first-child .rail::before{top:18px}
+.stop:last-child .rail::before{bottom:calc(100% - 18px)}
+.pin{
+  position:relative; z-index:1; margin-top:5px; width:26px; height:26px; border-radius:50%;
+  display:grid; place-items:center; background:var(--c, var(--accent)); color:#fff;
+  font:500 12px/1 "IBM Plex Sans KR", sans-serif; font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 4px var(--surface);
+}
+.pin.home{background:var(--surface2); color:var(--ink2); border:1.5px solid var(--line)}
+.stopbody{flex:1 1 auto; min-width:0; padding:5px 0 16px}
+.stopbtn{
+  display:block; width:100%; text-align:left; background:transparent; border:0;
+  padding:2px 8px 4px; margin-left:-8px; border-radius:var(--r); cursor:pointer;
+}
+.stopbtn:hover{background:var(--surface2)}
+.stopbtn:focus-visible{outline:2px solid var(--c, var(--accent)); outline-offset:1px}
+.stop.on .stopbtn{background:var(--surface2)}
+.stop.on .name{color:var(--c, var(--accent))}
+.name{font-size:14px; font-weight:500; line-height:1.4}
+.en{font-size:11px; color:var(--muted); letter-spacing:.01em}
+.tag{
+  display:inline-block; margin-top:5px; padding:2px 7px; border-radius:5px;
+  background:var(--sunken); color:var(--ink2); font-size:10.5px; line-height:1.5;
+}
+.leg{
+  display:flex; align-items:center; gap:6px; margin-top:8px;
+  font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums;
+}
+.leg svg{flex:0 0 auto; opacity:.6}
+.leg.pending{opacity:.45}
+
+.panelfoot{padding:16px 20px 0; display:flex; flex-direction:column; gap:8px}
+.linkbtn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 14px; border-radius:var(--r); border:1px solid var(--line);
+  background:var(--surface2); color:var(--ink); text-decoration:none;
+  font-size:12.5px; font-weight:500; transition:filter .14s, background .14s;
+}
+.linkbtn.primary{background:var(--c, var(--accent)); border-color:transparent; color:#fff}
+.linkbtn.primary:hover{filter:brightness(1.08)}
+.foothint{font-size:11px; color:var(--muted); line-height:1.6; text-align:center}
+
+.stage{position:relative; display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--sunken)}
+.mapwrap{position:relative; flex:1 1 auto; min-height:0}
+#map{position:absolute; inset:0}
+.mapctl{position:absolute; top:12px; right:12px; z-index:3; display:flex; flex-direction:column; gap:6px}
+.ctl{
+  width:38px; height:38px; display:grid; place-items:center; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); border-radius:9px;
+  box-shadow:var(--shadow); font-size:13px; font-weight:500;
+}
+.ctl:hover{background:var(--surface2)}
+.ctl[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:transparent}
+.ctl.wide{width:auto; padding:0 11px; font-size:11.5px}
+
+.hint{
+  position:absolute; left:12px; bottom:12px; z-index:3; max-width:min(340px, calc(100% - 24px));
+  background:var(--surface); border:1px solid var(--line); border-radius:9px;
+  box-shadow:var(--shadow); padding:9px 12px; font-size:11.5px; color:var(--ink2); line-height:1.5;
+}
+.hint b{color:var(--ink); font-weight:600}
+.hint button{
+  background:none; border:0; color:var(--muted); cursor:pointer;
+  text-decoration:underline; padding:0; margin-left:6px; font-size:11px;
+}
+
+.mk{
+  width:28px; height:28px; border-radius:50% 50% 50% 4px; transform:rotate(-45deg);
+  display:grid; place-items:center; background:var(--mc,#8C2F3D); color:#fff;
+  border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.4); cursor:pointer;
+  transition:transform .12s;
+}
+.mk span{transform:rotate(45deg); font:500 12px/1 "IBM Plex Sans KR", sans-serif}
+.mk.home{background:#fff; color:#1F1A23; border-color:var(--mc,#8C2F3D)}
+.mk.on{transform:rotate(-45deg) scale(1.25)}
+
+.pano{
+  flex:0 0 306px; display:flex; flex-direction:column;
+  border-top:1px solid var(--line); background:var(--surface); min-height:0;
+}
+.panohead{
+  flex:0 0 auto; display:flex; align-items:center; gap:8px;
+  padding:9px 14px; border-bottom:1px solid var(--line);
+}
+.panohead .t{font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.panohead .t small{color:var(--muted); font-weight:400; margin-left:7px; font-size:11px}
+.panohead .sp{flex:1}
+.iconbtn{
+  background:transparent; border:1px solid var(--line); border-radius:7px; cursor:pointer;
+  padding:4px 10px; font-size:11.5px; color:var(--ink2); text-decoration:none; white-space:nowrap;
+}
+.iconbtn:hover{background:var(--surface2)}
+.pano.fs{
+  position:fixed !important; top:0 !important; left:0 !important;
+  right:0 !important; bottom:0 !important;
+  width:100% !important; height:100% !important;
+  max-width:none !important; max-height:none !important;
+  z-index:40 !important; flex:1 1 auto !important;
+  border-top:0; box-shadow:none;
+}
+.pano.fs #pano{height:auto !important; min-height:0}
+#panoWrap:fullscreen{width:100%; height:100%; background:var(--surface)}
+#panoWrap:-webkit-full-screen{width:100%; height:100%; background:var(--surface)}
+.pano.fs .panohead{padding-top:calc(9px + env(safe-area-inset-top,0px))}
+.pano.fs .walkbar{padding-top:9px; padding-bottom:9px}
+.pano.fs .wmeta{font-size:12.5px}
+.walkbar{
+  flex:0 0 auto; display:flex; align-items:center; gap:9px;
+  padding:7px 14px; border-bottom:1px solid var(--line); background:var(--surface2);
+}
+.wbtn{
+  flex:0 0 auto; width:30px; height:30px; display:grid; place-items:center; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); border-radius:7px; font-size:12px;
+}
+.wbtn:hover{background:var(--sunken)}
+.wbtn:disabled{opacity:.4; cursor:default}
+.wbtn.play[aria-pressed="true"]{background:var(--c, var(--accent)); color:#fff; border-color:transparent}
+.wscrub{
+  flex:1 1 auto; min-width:60px; height:4px; -webkit-appearance:none; appearance:none;
+  background:var(--sunken); border-radius:99px; outline:none; cursor:pointer;
+}
+.wscrub::-webkit-slider-thumb{
+  -webkit-appearance:none; width:13px; height:13px; border-radius:50%;
+  background:var(--c, var(--accent)); border:2px solid var(--surface); cursor:pointer;
+}
+.wscrub::-moz-range-thumb{
+  width:13px; height:13px; border-radius:50%; border:2px solid var(--surface);
+  background:var(--c, var(--accent)); cursor:pointer;
+}
+.wmeta{
+  flex:0 0 auto; font-size:11px; color:var(--muted);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.wmeta b{color:var(--ink2); font-weight:500}
+.wspeed{
+  flex:0 0 auto; background:var(--surface); border:1px solid var(--line); border-radius:7px;
+  padding:4px 7px; font-size:11px; cursor:pointer; color:var(--ink2);
+}
+#pano{flex:1 1 auto; min-height:0; background:var(--sunken)}
+.walkdot{
+  width:14px; height:14px; border-radius:50%; background:var(--mc,#8C2F3D);
+  border:3px solid #fff; box-shadow:0 1px 5px rgba(0,0,0,.45);
+}
+.panomsg{
+  height:100%; display:grid; place-items:center; text-align:center; padding:20px;
+  font-size:12.5px; color:var(--muted); line-height:1.6;
+}
+
+.boot{position:fixed; inset:0; z-index:50; display:grid; place-items:center; padding:24px; background:var(--bg)}
+.bootcard{
+  max-width:540px; background:var(--surface); border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow); padding:26px 28px;
+}
+.bootcard h2{margin:0 0 10px; font:700 18px/1.4 "Gowun Batang", serif}
+.bootcard p{margin:0 0 10px; font-size:13px; color:var(--ink2); line-height:1.7}
+.bootcard code{
+  display:block; background:var(--sunken); border-radius:7px; padding:9px 11px;
+  font:400 12px/1.6 ui-monospace, "Cascadia Mono", monospace; margin:8px 0; word-break:break-all;
+}
+.bootcard ol{margin:8px 0 0; padding-left:20px; font-size:13px; color:var(--ink2); line-height:1.8}
+
+@media (max-width: 900px){
+  .grid{grid-template-columns:1fr; grid-template-rows:minmax(240px, 44vh) 1fr}
+  .panel{border-right:0; border-top:1px solid var(--line); order:2}
+  .stage{order:1}
+  .pano{flex-basis:210px}
+  .days{margin-left:0; width:100%; overflow-x:auto; flex-wrap:nowrap; padding-bottom:2px}
+  .daytab{flex:0 0 auto}
+}
+
+/* 휴대폰 */
+@media (max-width: 640px){
+  .bar{gap:8px 12px; padding:9px 14px; padding-top:calc(9px + env(safe-area-inset-top,0px))}
+  .brand h1{font-size:17px}
+  .brand .base{display:none}
+  .grid{grid-template-rows:minmax(200px, 38vh) 1fr}
+  .dayhead{padding:15px 16px 12px}
+  .dayhead h2{font-size:18.5px}
+  .stat{padding:10px 14px}
+  .notes{padding:12px 16px}
+  .stop{padding:0 16px}
+  .panelfoot{padding:14px 16px 0}
+  .hint{display:none}
+  .ctl{width:42px; height:42px}      /* 손가락 터치 영역 */
+  .ctl.wide{width:auto; padding:0 13px}
+  .mapctl{top:10px; right:10px; gap:7px}
+
+  /* 거리뷰는 휴대폰에서 항상 전체화면으로 */
+  .pano.fs .panohead{padding:10px 12px; padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  .pano.fs .panohead .t{font-size:14px}
+  .pano.fs .panohead .t small{display:block; margin:1px 0 0}
+  .pano.fs #panoOut{display:none}
+  .walkbar{gap:7px; padding:8px 12px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+  .wbtn{width:36px; height:36px}
+  .wmeta{font-size:11px; max-width:38vw; overflow:hidden; text-overflow:ellipsis}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app" hidden>
+  <header class="bar">
+    <div class="brand">
+      <h1>로마 도보 6일</h1>
+      <span class="base">매일 <b>폰타나 피우 스텔라</b>에서 출발해 같은 자리로 복귀 · 전 구간 도보</span>
+    </div>
+    <nav class="days" id="dayTabs" aria-label="날짜 선택"></nav>
+  </header>
+
+  <main class="grid">
+    <aside class="panel" id="panel"></aside>
+    <section class="stage">
+      <div class="mapwrap">
+        <div id="map"></div>
+        <div class="mapctl">
+          <button class="ctl wide" id="btn3d" type="button" aria-pressed="false" title="3D 기울기">3D</button>
+          <button class="ctl" id="btnRotL" type="button" title="왼쪽으로 회전">&#8634;</button>
+          <button class="ctl" id="btnRotR" type="button" title="오른쪽으로 회전">&#8635;</button>
+          <button class="ctl" id="btnFit" type="button" title="하루 전체 보기">&#10530;</button>
+          <button class="ctl" id="btnType" type="button" title="위성 / 지도 전환">&#9638;</button>
+        </div>
+        <div class="hint" id="hint">
+          <b>장소를 누르면</b> 그 지점으로 3D 시점이 내려가고 아래에 실제 구글 거리뷰가 열립니다.
+          지도는 Ctrl+드래그로 회전·기울기가 됩니다.
+          <button type="button" id="hintClose">닫기</button>
+        </div>
+      </div>
+      <div class="pano" id="panoWrap" hidden>
+        <div class="panohead">
+          <div class="t" id="panoTitle">거리뷰</div>
+          <div class="sp"></div>
+          <a class="iconbtn" id="panoOut" href="#" target="_blank" rel="noopener">구글 지도에서 열기</a>
+          <button class="iconbtn" id="panoFs" type="button" aria-pressed="false">전체화면</button>
+          <button class="iconbtn" id="panoClose" type="button">닫기</button>
+        </div>
+        <div class="walkbar" id="walkbar">
+          <button class="wbtn" id="wPrev" type="button" title="뒤로 한 걸음">&#9664;</button>
+          <button class="wbtn play" id="wPlay" type="button" aria-pressed="false" title="따라 걷기 (스페이스바)">&#9654;</button>
+          <button class="wbtn" id="wNext" type="button" title="앞으로 한 걸음">&#9654;&#9654;</button>
+          <input class="wscrub" id="wScrub" type="range" min="0" max="100" value="0" step="1" aria-label="경로 위치">
+          <span class="wmeta" id="wMeta">–</span>
+          <button class="wspeed" id="wSpeed" type="button" title="속도">1&times;</button>
+        </div>
+        <div id="pano"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="boot" id="boot">
+  <div class="bootcard" id="bootcard">
+    <h2>지도를 불러오는 중…</h2>
+    <p>구글 지도 API에 연결하고 있습니다.</p>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var map, pano, svService, hintEl;
+  var markers = [], routeLine = null, routeGlow = null;
+  var dayIndex = 0;
+  var routeCache = {};
+  var isSatellite = true, is3D = false;
+
+  function $(s){ return document.querySelector(s); }
+
+  function isDark(){
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t === 'dark') return true;
+    if (t === 'light') return false;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function C(day){ return isDark() ? day.colorDark : day.color; }
+
+  /* ── 부팅 ───────────────────────────── */
+  function boot(){
+    var key = window.GMAPS_KEY || '';
+    if (key.indexOf('AIza') !== 0){
+      fail('API 키가 없습니다',
+        '<p>같은 폴더의 <code>config.js</code>를 열어 따옴표 안에 Google Maps API 키를 넣어주세요.</p>' +
+        '<code>window.GMAPS_KEY = "AIza…";</code>');
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(key) +
+            '&libraries=geometry&language=ko&region=IT&v=weekly&callback=__romeInit';
+    s.async = true;
+    s.onerror = function(){
+      fail('구글 지도 스크립트를 불러오지 못했습니다',
+        '<p>인터넷 연결을 먼저 확인해 주세요. 연결에 문제가 없다면 키가 잘못되었을 수 있습니다.</p>');
+    };
+    document.head.appendChild(s);
+  }
+
+  function fail(title, html){
+    $('#bootcard').innerHTML = '<h2>' + title + '</h2>' + html +
+      '<ol><li>Google Cloud 콘솔에서 <b>Maps JavaScript API</b> 사용 설정</li>' +
+      '<li>사용자 인증 정보에서 API 키 생성</li>' +
+      '<li>키 제한 → 웹사이트 → <b>http://localhost:*/*</b> 추가</li>' +
+      '<li><code>config.js</code>에 키를 넣고 새로고침</li></ol>';
+    $('#boot').hidden = false;
+    $('#app').hidden = true;
+  }
+
+  window.gm_authFailure = function(){
+    fail('구글이 이 키를 거부했습니다',
+      '<p>대개 아래 셋 중 하나입니다.</p>' +
+      '<ol><li>프로젝트에 <b>결제 계정</b>이 연결되지 않음 (Maps Platform은 필수)</li>' +
+      '<li><b>Maps JavaScript API</b>가 아직 사용 설정되지 않음</li>' +
+      '<li>키의 리퍼러 제한에 <code>http://localhost:*/*</code>가 없음</li></ol>');
+  };
+
+  /* ── 초기화 ─────────────────────────── */
+  window.__romeInit = function(){
+    $('#boot').hidden = true;
+    $('#app').hidden = false;
+    hintEl = $('#hint');
+
+    map = new google.maps.Map($('#map'), {
+      center: { lat: window.HOTEL.lat, lng: window.HOTEL.lng },
+      zoom: 15,
+      mapTypeId: 'satellite',
+      tilt: 0,
+      heading: 0,
+      disableDefaultUI: true,
+      gestureHandling: 'greedy',
+      keyboardShortcuts: false,
+      clickableIcons: false
+    });
+
+    pano = new google.maps.StreetViewPanorama($('#pano'), {
+      visible: false,
+      addressControl: false,
+      fullscreenControl: false,
+      motionTracking: false,
+      motionTrackingControl: false,
+      zoomControl: true,
+      linksControl: true,
+      panControl: false,
+      enableCloseButton: false
+    });
+    map.setStreetView(pano);
+    svService = new google.maps.StreetViewService();
+
+    buildTabs();
+    bindControls();
+    selectDay(0);
+  };
+
+  /* ── 날짜 탭 ────────────────────────── */
+  function buildTabs(){
+    var nav = $('#dayTabs');
+    nav.innerHTML = '';
+    window.DAYS.forEach(function(d, i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'daytab';
+      b.style.setProperty('--c', C(d));
+      b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<span class="dot"></span><span class="d">' + d.date +
+                    '</span><span class="w">' + d.dow + '</span>';
+      b.addEventListener('click', function(){ selectDay(i); });
+      nav.appendChild(b);
+    });
+  }
+
+  function selectDay(i){
+    walkPause();
+    dayIndex = i;
+    var day = window.DAYS[i];
+    Array.prototype.forEach.call($('#dayTabs').children, function(b, k){
+      b.setAttribute('aria-pressed', k === i ? 'true' : 'false');
+    });
+    renderPanel(day);
+    drawDay(day);
+    closePano();
+    if (routeCache[i]) applyRoute(i); else loadRoute(i);
+  }
+
+  function seq(day){
+    var H = window.HOTEL;
+    var a = [{ n: H.name, en: H.en, lat: H.lat, lng: H.lng, home: true, note: '출발 · ' + H.addr }];
+    day.stops.forEach(function(s){ a.push(s); });
+    a.push({ n: H.name, en: H.en, lat: H.lat, lng: H.lng, home: true, note: '복귀' });
+    return a;
+  }
+
+  /* ── 좌측 패널 ──────────────────────── */
+  function renderPanel(day){
+    var list = seq(day), p = $('#panel');
+    p.style.setProperty('--c', C(day));
+
+    var h = '';
+    h += '<div class="dayhead">';
+    h +=   '<div class="eyebrow">' + day.date + ' ' + day.dow + ' · ' + day.marble + '</div>';
+    h +=   '<h2>' + day.theme + '</h2>';
+    h +=   '<p class="sub">' + day.sub + '</p>';
+    h += '</div>';
+
+    h += '<div class="stats">';
+    h +=   '<div class="stat"><div class="k">도보 거리</div><div class="v" id="totDist">…</div></div>';
+    h +=   '<div class="stat"><div class="k">걷는 시간</div><div class="v" id="totTime">…</div></div>';
+    h +=   '<div class="stat"><div class="k">들르는 곳</div><div class="v">' + day.stops.length + '<small> 곳</small></div></div>';
+    h += '</div>';
+
+    if (day.notes && day.notes.length){
+      h += '<div class="notes">';
+      day.notes.forEach(function(n){ h += '<div class="note">' + n + '</div>'; });
+      h += '</div>';
+    }
+
+    h += '<ul class="stops" id="stopList">';
+    list.forEach(function(s, i){
+      var home = !!s.home;
+      h += '<li class="stop" data-i="' + i + '">';
+      h +=   '<div class="rail"><div class="pin' + (home ? ' home' : '') + '">' +
+             (home ? '&#8962;' : String(i)) + '</div></div>';
+      h +=   '<div class="stopbody">';
+      h +=     '<button class="stopbtn" type="button">';
+      h +=       '<div class="name">' + s.n + '</div>';
+      h +=       '<div class="en">' + s.en + '</div>';
+      if (s.note) h += '<div class="tag">' + s.note + '</div>';
+      h +=     '</button>';
+      if (i < list.length - 1){
+        h += '<div class="leg pending" data-leg="' + i + '">' +
+             '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+             '<circle cx="13" cy="4" r="1.6"/><path d="M9.5 21l2.2-5.4L9 12.6l1-4.4 3.2 1.7 2.4 2.2"/>' +
+             '<path d="M15.5 21l-1.6-4.3"/></svg>' +
+             '<span>도보 거리 계산 중…</span></div>';
+      }
+      h +=   '</div>';
+      h += '</li>';
+    });
+    h += '</ul>';
+
+    h += '<div class="panelfoot">';
+    h +=   '<button class="linkbtn primary" type="button" id="walkStart">이 날 코스 따라 걷기 &#9654;</button>';
+    h +=   '<a class="linkbtn" target="_blank" rel="noopener" href="' + gmapsUrl(day) +
+           '">구글 지도에서 이 날 도보 경로 열기</a>';
+    h +=   '<div class="foothint" id="footHint">거리와 시간은 실제 보행로 기준입니다. 관람·식사·휴식 시간은 빠져 있습니다.</div>';
+    h += '</div>';
+
+    p.innerHTML = h;
+    p.scrollTop = 0;
+
+    Array.prototype.forEach.call(p.querySelectorAll('.stop'), function(li){
+      li.querySelector('.stopbtn').addEventListener('click', function(){
+        focusStop(parseInt(li.getAttribute('data-i'), 10));
+      });
+    });
+
+    var ws = document.getElementById('walkStart');
+    if (ws) ws.addEventListener('click', function(){
+      if (!walk.ready){ this.textContent = '경로 준비 중…'; return; }
+      walk.i = 0;
+      walkPlay();
+    });
+
+    if (routeCache[dayIndex]) paintLegs(routeCache[dayIndex]);
+  }
+
+  function gmapsUrl(day){
+    var list = seq(day);
+    var o = list[0], d = list[list.length - 1];
+    var mid = list.slice(1, -1).map(function(s){ return s.lat + ',' + s.lng; }).join('|');
+    return 'https://www.google.com/maps/dir/?api=1' +
+      '&origin=' + o.lat + ',' + o.lng +
+      '&destination=' + d.lat + ',' + d.lng +
+      (mid ? '&waypoints=' + encodeURIComponent(mid) : '') +
+      '&travelmode=walking';
+  }
+
+  /* ── 마커 ───────────────────────────── */
+  function clearMap(){
+    markers.forEach(function(m){ m.setMap(null); });
+    markers = [];
+    if (routeLine){ routeLine.setMap(null); routeLine = null; }
+    if (routeGlow){ routeGlow.setMap(null); routeGlow = null; }
+  }
+
+  function makeMarker(stop, i, color){
+    var el = document.createElement('div');
+    el.className = 'mk' + (stop.home ? ' home' : '');
+    el.style.setProperty('--mc', color);
+    el.innerHTML = '<span>' + (stop.home ? '&#8962;' : i) + '</span>';
+    el.addEventListener('click', function(e){ e.stopPropagation(); focusStop(i); });
+
+    var ov = new google.maps.OverlayView();
+    ov.onAdd = function(){
+      el.style.position = 'absolute';
+      this.getPanes().floatPane.appendChild(el);
+    };
+    ov.draw = function(){
+      var proj = this.getProjection();
+      if (!proj) return;
+      var p = proj.fromLatLngToDivPixel(new google.maps.LatLng(stop.lat, stop.lng));
+      if (!p) return;
+      el.style.left = (p.x - 14) + 'px';
+      el.style.top  = (p.y - 28) + 'px';
+    };
+    ov.onRemove = function(){ if (el.parentNode) el.parentNode.removeChild(el); };
+    ov.el = el;
+    ov.stopIndex = i;
+    ov.setMap(map);
+    return ov;
+  }
+
+  function drawDay(day){
+    clearMap();
+    var color = C(day), list = seq(day);
+    var bounds = new google.maps.LatLngBounds();
+
+    list.forEach(function(s, i){
+      bounds.extend(new google.maps.LatLng(s.lat, s.lng));
+      if (s.home && i === list.length - 1) return;
+      markers.push(makeMarker(s, i, color));
+    });
+
+    is3D = false;
+    $('#btn3d').setAttribute('aria-pressed', 'false');
+    map.setTilt(0);
+    map.setHeading(0);
+    map.fitBounds(bounds, { top: 70, right: 70, bottom: 70, left: 70 });
+  }
+
+  /* ── 도보 경로 (OSRM 보행 프로파일) ─── */
+  function loadRoute(i){
+    var list = seq(window.DAYS[i]);
+    var coords = list.map(function(s){ return s.lng + ',' + s.lat; }).join(';');
+    var url = 'https://routing.openstreetmap.de/routed-foot/route/v1/foot/' + coords +
+              '?overview=full&geometries=geojson&steps=false';
+
+    fetch(url).then(function(r){
+      if (!r.ok) throw new Error('osrm ' + r.status);
+      return r.json();
+    }).then(function(j){
+      if (!j.routes || !j.routes.length) throw new Error('no route');
+      var rt = j.routes[0];
+      routeCache[i] = {
+        path: rt.geometry.coordinates.map(function(p){ return { lat: p[1], lng: p[0] }; }),
+        legs: rt.legs.map(function(l){ return { dist: l.distance, dur: l.duration }; }),
+        total: rt.distance,
+        totalDur: rt.duration,
+        straight: false
+      };
+      if (dayIndex === i) applyRoute(i);
+    }).catch(function(){
+      routeCache[i] = straightRoute(list);
+      if (dayIndex === i) applyRoute(i);
+    });
+  }
+
+  function straightRoute(list){
+    var legs = [], total = 0, path = [];
+    for (var k = 0; k < list.length; k++){
+      path.push({ lat: list[k].lat, lng: list[k].lng });
+      if (k < list.length - 1){
+        var d = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(list[k].lat, list[k].lng),
+          new google.maps.LatLng(list[k + 1].lat, list[k + 1].lng)
+        ) * 1.3;
+        legs.push({ dist: d, dur: d / 1.25 });
+        total += d;
+      }
+    }
+    return {
+      path: path, legs: legs, total: total,
+      totalDur: legs.reduce(function(a, b){ return a + b.dur; }, 0),
+      straight: true
+    };
+  }
+
+  function applyRoute(i){
+    var r = routeCache[i], color = C(window.DAYS[i]);
+    if (routeLine) routeLine.setMap(null);
+    if (routeGlow) routeGlow.setMap(null);
+
+    routeGlow = new google.maps.Polyline({
+      path: r.path, map: map, strokeColor: '#ffffff',
+      strokeOpacity: 0.5, strokeWeight: 8, zIndex: 1
+    });
+    routeLine = new google.maps.Polyline({
+      path: r.path, map: map, strokeColor: color,
+      strokeOpacity: r.straight ? 0 : 0.95, strokeWeight: 4, zIndex: 2,
+      icons: r.straight ? [{
+        icon: { path: 'M 0,-1 0,1', strokeOpacity: 0.95, strokeColor: color, scale: 3 },
+        offset: '0', repeat: '12px'
+      }] : undefined
+    });
+    paintLegs(r);
+    buildWalk();
+  }
+
+  function fmtDist(m){
+    return m >= 1000 ? (m / 1000).toFixed(1) + ' km' : (Math.round(m / 10) * 10) + ' m';
+  }
+  function fmtDur(s){
+    var m = Math.round(s / 60);
+    return m >= 60 ? Math.floor(m / 60) + '시간 ' + (m % 60) + '분' : m + '분';
+  }
+
+  function paintLegs(r){
+    var td = document.getElementById('totDist');
+    var tt = document.getElementById('totTime');
+    if (td) td.innerHTML = fmtDist(r.total).replace(/ (km|m)$/, '<small> $1</small>');
+    if (tt) tt.innerHTML = fmtDur(r.totalDur).replace(/(시간|분)/g, '<small>$1</small>');
+
+    r.legs.forEach(function(l, k){
+      var el = document.querySelector('.leg[data-leg="' + k + '"]');
+      if (!el) return;
+      el.classList.remove('pending');
+      el.querySelector('span').textContent =
+        '도보 ' + fmtDist(l.dist) + ' · 약 ' + fmtDur(l.dur) + (r.straight ? ' (근사)' : '');
+    });
+
+    if (r.straight){
+      var f = document.getElementById('footHint');
+      if (f) f.innerHTML = '보행로 서버에 연결하지 못해 <b>직선거리 &times;1.3</b>으로 근사한 값입니다. ' +
+                           '실제 경로는 아래 구글 지도 링크에서 확인하세요.';
+    }
+  }
+
+  /* ── 장소 선택 → 3D 시점 + 거리뷰 ───── */
+  function focusStop(i){
+    var list = seq(window.DAYS[dayIndex]), s = list[i];
+
+    Array.prototype.forEach.call(document.querySelectorAll('.stop'), function(li){
+      li.classList.toggle('on', parseInt(li.getAttribute('data-i'), 10) === i);
+    });
+    markers.forEach(function(m){ m.el.classList.toggle('on', m.stopIndex === i); });
+
+    var target = new google.maps.LatLng(s.lat, s.lng);
+    map.setCenter(target);
+    map.setZoom(18);
+    map.setTilt(45);
+    is3D = true;
+    $('#btn3d').setAttribute('aria-pressed', 'true');
+    if (isSatellite) map.setMapTypeId('satellite');
+
+    var li = document.querySelector('.stop[data-i="' + i + '"]');
+    if (li) li.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+    openPano(s, target);
+    walkPause();
+    walkFromStop(i);
+  }
+
+  function openPano(s, target){
+    $('#panoWrap').hidden = false;
+    $('#panoTitle').innerHTML = s.n + '<small>' + s.en + '</small>';
+    $('#panoOut').href = 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + s.lat + ',' + s.lng;
+
+    function show(data){
+      var heading = google.maps.geometry.spherical.computeHeading(data.location.latLng, target);
+      pano.setPano(data.location.pano);
+      pano.setPov({ heading: heading, pitch: 2 });
+      pano.setZoom(0);
+      pano.setVisible(true);
+    }
+
+    svService.getPanorama({ location: target, radius: 90, source: 'outdoor' }, function(d1, s1){
+      if (s1 === 'OK' && d1 && d1.location){ show(d1); return; }
+      svService.getPanorama({ location: target, radius: 220 }, function(d2, s2){
+        if (s2 === 'OK' && d2 && d2.location){ show(d2); return; }
+        pano.setVisible(false);
+        $('#pano').innerHTML =
+          '<div class="panomsg">이 지점 반경 220&nbsp;m 안에 구글 거리뷰가 없습니다.<br>' +
+          '건물 내부이거나 차량이 다니지 않는 구역일 수 있어요.<br>' +
+          '위의 “구글 지도에서 열기”로 확인해 보세요.</div>';
+      });
+    });
+  }
+
+  function closePano(){
+    walkPause();
+    setFullscreen(false);
+    $('#panoWrap').hidden = true;
+    if (pano) pano.setVisible(false);
+  }
+
+  /* ── 경로 따라 걷기 ─────────────────── */
+  var walk = {
+    pts: [], cum: [], total: 0, anchors: [],
+    i: 0, timer: null, speed: 1, dot: null, curPano: null, ready: false
+  };
+  var STEP_M = 25;
+
+  function resample(path, step){
+    var sph = google.maps.geometry.spherical;
+    var P = path.map(function(p){ return new google.maps.LatLng(p.lat, p.lng); });
+    var seg = [], total = 0, k;
+    for (k = 1; k < P.length; k++){
+      var d = sph.computeDistanceBetween(P[k - 1], P[k]);
+      seg.push(d); total += d;
+    }
+    var pts = [], cum = [], idx = 0, before = 0;
+    for (var t = 0; t <= total; t += step){
+      while (idx < seg.length && before + seg[idx] < t){ before += seg[idx]; idx++; }
+      if (idx >= seg.length) break;
+      var f = seg[idx] > 0 ? (t - before) / seg[idx] : 0;
+      pts.push(sph.interpolate(P[idx], P[idx + 1], f));
+      cum.push(t);
+    }
+    if (P.length){ pts.push(P[P.length - 1]); cum.push(total); }
+    return { pts: pts, cum: cum, total: total };
+  }
+
+  function buildWalk(){
+    walkPause();
+    if (walk.dot){ walk.dot.setMap(null); walk.dot = null; }
+    walk.ready = false;
+    var r = routeCache[dayIndex];
+    if (!r || !r.path || r.path.length < 2) return;
+
+    var rs = resample(r.path, STEP_M);
+    walk.pts = rs.pts; walk.cum = rs.cum; walk.total = rs.total;
+    walk.i = 0; walk.curPano = null;
+
+    // 각 방문지가 경로의 몇 번째 지점에 해당하는지
+    var sph = google.maps.geometry.spherical, list = seq(window.DAYS[dayIndex]);
+    walk.anchors = list.map(function(s){
+      var target = new google.maps.LatLng(s.lat, s.lng), best = 0, bd = Infinity;
+      for (var k = 0; k < walk.pts.length; k++){
+        var d = sph.computeDistanceBetween(walk.pts[k], target);
+        if (d < bd){ bd = d; best = k; }
+      }
+      return { name: s.n, i: best };
+    });
+
+    var el = document.createElement('div');
+    el.className = 'walkdot';
+    el.style.setProperty('--mc', C(window.DAYS[dayIndex]));
+    var ov = new google.maps.OverlayView();
+    ov.onAdd = function(){ el.style.position = 'absolute'; this.getPanes().floatPane.appendChild(el); };
+    ov.draw = function(){
+      var proj = this.getProjection();
+      if (!proj || !walk.pts.length) return;
+      var p = proj.fromLatLngToDivPixel(walk.pts[walk.i]);
+      if (!p) return;
+      el.style.left = (p.x - 10) + 'px';
+      el.style.top = (p.y - 10) + 'px';
+    };
+    ov.onRemove = function(){ if (el.parentNode) el.parentNode.removeChild(el); };
+    ov.setMap(map);
+    walk.dot = ov;
+    walk.ready = true;
+
+    var sc = $('#wScrub');
+    sc.max = String(Math.max(1, walk.pts.length - 1));
+    sc.value = '0';
+    updateWalkMeta();
+  }
+
+  function updateWalkMeta(){
+    var m = $('#wMeta');
+    if (!walk.ready){ m.textContent = '–'; return; }
+    var next = null;
+    for (var k = 0; k < walk.anchors.length; k++){
+      if (walk.anchors[k].i > walk.i){ next = walk.anchors[k]; break; }
+    }
+    var walked = fmtDist(walk.cum[walk.i] || 0);
+    if (next){
+      var left = (walk.cum[next.i] || 0) - (walk.cum[walk.i] || 0);
+      m.innerHTML = '<b>' + next.name + '</b> 까지 ' + fmtDist(left) + ' · ' + walked + ' 걸음';
+    } else {
+      m.innerHTML = '<b>도착</b> · ' + walked + ' 완주';
+    }
+  }
+
+  function walkGoto(i, silent){
+    if (!walk.ready) return;
+    walk.i = Math.max(0, Math.min(walk.pts.length - 1, i));
+    $('#wScrub').value = String(walk.i);
+    updateWalkMeta();
+    if (walk.dot) walk.dot.draw();
+    if (silent) return;
+
+    var here = walk.pts[walk.i];
+    var ahead = walk.pts[Math.min(walk.pts.length - 1, walk.i + 2)];
+    var heading = walk.i >= walk.pts.length - 1
+      ? pano.getPov().heading
+      : google.maps.geometry.spherical.computeHeading(here, ahead);
+
+    map.panTo(here);
+    $('#panoWrap').hidden = false;
+
+    svService.getPanorama({ location: here, radius: 45, source: 'outdoor' }, function(d, st){
+      if (st !== 'OK' || !d || !d.location){
+        svService.getPanorama({ location: here, radius: 110 }, function(d2, st2){
+          if (st2 === 'OK' && d2 && d2.location) place(d2, heading);
+        });
+        return;
+      }
+      place(d, heading);
+    });
+
+    function place(d, hd){
+      if (d.location.pano !== walk.curPano){
+        walk.curPano = d.location.pano;
+        pano.setPano(d.location.pano);
+      }
+      pano.setPov({ heading: hd, pitch: 0 });
+      pano.setVisible(true);
+    }
+  }
+
+  function walkStep(n){
+    walkPause();
+    walkGoto(walk.i + n);
+  }
+
+  /* 거리뷰 전체화면 */
+  function setFullscreen(on){
+    var w = $('#panoWrap'), b = $('#panoFs');
+    if (!w) return;
+    w.classList.toggle('fs', on);
+    if (b){
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.textContent = on ? '축소' : '전체화면';
+    }
+    // 브라우저 자체 전체화면도 함께 시도 (클릭 제스처 안에서만 허용됨)
+    try {
+      if (on){
+        if (!document.fullscreenElement && w.requestFullscreen){
+          var p = w.requestFullscreen();
+          if (p && p.catch) p.catch(function(){});
+        }
+      } else if (document.fullscreenElement && document.exitFullscreen){
+        var q = document.exitFullscreen();
+        if (q && q.catch) q.catch(function(){});
+      }
+    } catch (e) {}
+    nudgePano();
+  }
+
+  // 파노라마 캔버스가 새 크기를 못 따라오는 경우를 강제로 갱신
+  function nudgePano(){
+    [80, 320, 700].forEach(function(ms){
+      setTimeout(function(){
+        if (!pano) return;
+        try {
+          google.maps.event.trigger(pano, 'resize');
+          var pv = pano.getPov();
+          pano.setPov({ heading: pv.heading, pitch: pv.pitch });
+        } catch (e) {}
+        if (map) try { google.maps.event.trigger(map, 'resize'); } catch (e) {}
+      }, ms);
+    });
+  }
+  function isFullscreen(){ return $('#panoWrap').classList.contains('fs'); }
+
+  function walkPlay(){
+    if (!walk.ready) return;
+    if (walk.i >= walk.pts.length - 1) walk.i = 0;
+    setFullscreen(true);
+    $('#wPlay').setAttribute('aria-pressed', 'true');
+    $('#wPlay').innerHTML = '&#10073;&#10073;';
+    walkGoto(walk.i);
+    walk.timer = setInterval(function(){
+      if (walk.i >= walk.pts.length - 1){ walkPause(); return; }
+      walkGoto(walk.i + 1);
+    }, Math.round(1400 / walk.speed));
+  }
+
+  function walkPause(){
+    if (walk.timer){ clearInterval(walk.timer); walk.timer = null; }
+    var b = $('#wPlay');
+    if (b){ b.setAttribute('aria-pressed', 'false'); b.innerHTML = '&#9654;'; }
+  }
+
+  function walkToggle(){ walk.timer ? walkPause() : walkPlay(); }
+
+  function walkFromStop(i){
+    if (!walk.ready || !walk.anchors[i]) return;
+    walkGoto(walk.anchors[i].i, true);
+  }
+
+  /* ── 컨트롤 ─────────────────────────── */
+  function bindControls(){
+    $('#wPlay').addEventListener('click', walkToggle);
+    $('#wPrev').addEventListener('click', function(){ walkStep(-1); });
+    $('#wNext').addEventListener('click', function(){ walkStep(1); });
+    $('#wScrub').addEventListener('input', function(){
+      walkPause();
+      walkGoto(parseInt(this.value, 10));
+    });
+    $('#wSpeed').addEventListener('click', function(){
+      walk.speed = walk.speed === 1 ? 2 : (walk.speed === 2 ? 4 : 1);
+      this.innerHTML = walk.speed + '&times;';
+      if (walk.timer){ walkPause(); walkPlay(); }
+    });
+    $('#btn3d').addEventListener('click', function(){
+      is3D = !is3D;
+      this.setAttribute('aria-pressed', is3D ? 'true' : 'false');
+      if (is3D){
+        if (map.getZoom() < 18) map.setZoom(18);
+        map.setTilt(45);
+      } else {
+        map.setTilt(0);
+      }
+    });
+    $('#btnRotL').addEventListener('click', function(){ map.setHeading((map.getHeading() || 0) - 45); });
+    $('#btnRotR').addEventListener('click', function(){ map.setHeading((map.getHeading() || 0) + 45); });
+    $('#btnFit').addEventListener('click', function(){
+      drawDay(window.DAYS[dayIndex]);
+      if (routeCache[dayIndex]) applyRoute(dayIndex);
+    });
+    $('#btnType').addEventListener('click', function(){
+      isSatellite = !isSatellite;
+      map.setMapTypeId(isSatellite ? 'satellite' : 'roadmap');
+      this.innerHTML = isSatellite ? '&#9638;' : '&#9707;';
+    });
+    $('#panoFs').addEventListener('click', function(){ setFullscreen(!isFullscreen()); });
+    document.addEventListener('fullscreenchange', function(){
+      // 브라우저 UI(F11·ESC)로 빠져나온 경우 화면 상태를 맞춰줌
+      if (!document.fullscreenElement && isFullscreen()) setFullscreen(false);
+      else nudgePano();
+    });
+    window.addEventListener('resize', nudgePano);
+    $('#panoClose').addEventListener('click', closePano);
+    $('#hintClose').addEventListener('click', function(){ hintEl.hidden = true; });
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape'){
+        if (isFullscreen()) setFullscreen(false); else closePano();
+        return;
+      }
+      if (e.key === ' '){ e.preventDefault(); walkToggle(); return; }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var n = parseInt(e.key, 10);
+      if (n >= 1 && n <= window.DAYS.length) selectDay(n - 1);
+    });
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
